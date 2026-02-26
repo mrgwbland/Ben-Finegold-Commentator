@@ -1,0 +1,33 @@
+{
+  "name": "dmitlichess",
+  "version": "0.0.0",
+  "dependencies": {
+    "imagemin-gifsicle": "^6.0.1",
+    "webextension-polyfill": "^0.3.1"
+  },
+  "devDependencies": {
+    "grunt": "~1.0.3",
+    "grunt-bower-install": "~1.6.0",
+    "grunt-chrome-manifest": "~0.3.0",
+    "grunt-concurrent": "~2.3.1",
+    "grunt-contrib-clean": "~2.0.0",
+    "grunt-contrib-compress": "~1.4.3",
+    "grunt-contrib-concat": "~1.0.1",
+    "grunt-contrib-connect": "~2.0.0",
+    "grunt-contrib-copy": "~1.0.0",
+    "grunt-contrib-cssmin": "~3.0.0",
+    "grunt-contrib-htmlmin": "~3.0.0",
+    "grunt-contrib-imagemin": "~3.1.0",
+    "grunt-contrib-jshint": "~2.0.0",
+    "grunt-contrib-watch": "~1.1.0",
+    "grunt-mocha": "~1.1.0",
+    "grunt-svgmin": "~5.0.0",
+    "grunt-usemin": "~3.1.1",
+    "jshint-stylish": "~2.2.1",
+    "load-grunt-tasks": "~4.0.0",
+    "time-grunt": "~2.0.0"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
