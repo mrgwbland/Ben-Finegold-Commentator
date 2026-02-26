@@ -7,20 +7,21 @@ class PopupCtrl {
   }
 
   generateMiscList = () => {
-    const s = this.sounds[this.options.commentator];
+    const s = this.sounds[this.options.commentator] || {};
+    const list = (key) => Array.isArray(s[key]) ? s[key] : [];
     const soundFiles = [
-      ...s.misc,
-      ...s.check,
-      ...s.checkmate,
-      ...s.stalemate,
-      ...s.draw,
-      ...s.resign,
-      ...s.start,
-      ...s.name,
-      ...s.check,
-      ...s.fill,
-      ...s.long,
-      ...s.signoff
+      ...list('misc'),
+      ...list('check'),
+      ...list('checkmate'),
+      ...list('stalemate'),
+      ...list('draw'),
+      ...list('resign'),
+      ...list('start'),
+      ...list('name'),
+      ...list('check'),
+      ...list('fill'),
+      ...list('long'),
+      ...list('signoff')
     ].filter(n => !!n); // Remove undefined entries (if sounds don't exist for one category)
 
     const soundboard = document.querySelector('#soundboard');
@@ -87,9 +88,19 @@ class PopupCtrl {
       document.getElementById('enabled').checked = this.options.enabled;
 
       const url = chrome.runtime.getURL(`ogg/${this.options.commentator}/meta.json`);
-      const response = await fetch(url);
-      const json = await response.json();
-      this.sounds[this.options.commentator] = json.sounds;
+      let commentatorSounds = {};
+
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const json = await response.json();
+          commentatorSounds = json.sounds || {};
+        }
+      } catch (error) {
+        commentatorSounds = {};
+      }
+
+      this.sounds[this.options.commentator] = commentatorSounds;
 
       this.generateMiscList();
       this.addListeners();

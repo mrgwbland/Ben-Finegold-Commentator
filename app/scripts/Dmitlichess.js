@@ -92,8 +92,17 @@ class Dmitlichess {
   start = async () => {
     // Load the sounds for the selected commentator
     const url = chrome.runtime.getURL(`ogg/${this.options.commentator}/meta.json`);
-    const res = await fetch(url);
-    const { sounds } = await res.json();
+    let sounds = {};
+
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        const json = await res.json();
+        sounds = json.sounds || {};
+      }
+    } catch (error) {
+      sounds = {};
+    }
 
     this.sounds[this.options.commentator] = sounds;
     this.audioQueue = new AudioQueue(this.options, this.movesElement, this.sounds);

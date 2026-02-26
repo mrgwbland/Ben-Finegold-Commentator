@@ -1,6 +1,6 @@
 {
-    "name": "dmitlichess",
-    "version": "0.5.701",
+    "name": "Finegold Commentary for Lichess",
+    "version": "0.0.1",
     "manifest_version": 3,
     "description": "Adds top-level grandmaster commentary to lichess.org (audio)",
     "browser_specific_settings": {
@@ -15,8 +15,8 @@
     },
     "default_locale": "en",
     "action": {
-        "default_icon": "images/dmitri.png",
-        "default_title": "dmitlichess",
+        "default_icon": "images/finegold.png",
+        "default_title": "Finegold Commentary",
         "default_popup": "options.html"
     },
     "content_scripts": [

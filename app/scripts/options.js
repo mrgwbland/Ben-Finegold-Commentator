@@ -2,6 +2,14 @@
 
 class OptionsCtrl {
   constructor() {
+    this.commentatorMetaDefaults = {
+      dmitri: { icon: 'dmitri.png', name: 'Dmitri Komarov' },
+      maurice: { icon: 'maurice.png', name: 'Maurice Ashley' },
+      yasser: { icon: 'yasser.png', name: 'Yasser Seirawan' },
+      finegold: { icon: 'Finegold.png', name: 'Ben Finegold' },
+      zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' }
+    };
+
     this.elements = {
       commentators: document.querySelectorAll('input[name="commentator"]'),
       defaultButton: document.getElementById('default'),
@@ -48,7 +56,13 @@ class OptionsCtrl {
 
   // Restores select box and checkbox state using the preferences storage.
   restore = (options) => {
-    document.getElementById(`commentator_${options.commentator}`).checked = true;
+    const selectedCommentator = document.getElementById(`commentator_${options.commentator}`);
+    if (selectedCommentator) {
+      selectedCommentator.checked = true;
+    } else {
+      this.elements.commentators?.[0] && (this.elements.commentators[0].checked = true);
+    }
+
     this.elements.enabled.checked = options.enabled;
     this.elements.volume.value = options.volume;
     this.elements.miscInterval.value = options.miscInterval;
@@ -56,14 +70,35 @@ class OptionsCtrl {
     this.elements.longTimeout.value = options.longTimeout;
   };
 
+  getCommentatorMeta = async (commentator) => {
+    const fallback = this.commentatorMetaDefaults[commentator] || {
+      icon: 'icon-16.png',
+      name: commentator
+    };
+
+    try {
+      const url = chrome.runtime.getURL(`ogg/${commentator}/meta.json`);
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        return fallback;
+      }
+
+      const json = await response.json();
+      return {
+        icon: json.icon || fallback.icon,
+        name: json.name || fallback.name
+      };
+    } catch (error) {
+      return fallback;
+    }
+  };
+
   createCommentatorOption = async (commentator) => {
     const container = document.querySelector('.commentator_radio');
     if (!container) return;
 
-    const url = chrome.runtime.getURL(`ogg/${commentator}/meta.json`);
-    const response = await fetch(url);
-    const json = await response.json();
-    const { icon = 'default-icon.png', name = 'tooltip' } = json;
+    const { icon, name } = await this.getCommentatorMeta(commentator);
 
     const input = document.createElement('input');
     input.type = 'radio';
@@ -90,9 +125,9 @@ class OptionsCtrl {
 
     container.innerHTML = ''; // Optional: clear existing content
 
-    await Promise.all(commentators.map(commentator =>
-      this.createCommentatorOption(commentator)
-    ));
+    for (const commentator of commentators) {
+      await this.createCommentatorOption(commentator);
+    }
 
     this.elements.commentators = document.querySelectorAll('input[name="commentator"]');
   };
@@ -127,7 +162,8 @@ class OptionsCtrl {
           item.addEventListener('click', () => {
             AudioUtils.play(sounds, 'misc', commentator, this.elements.volume?.value);
           });
-        });
+        })
+        .catch(() => {});
     });
   };
 
