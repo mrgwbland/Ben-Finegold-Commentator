@@ -62,15 +62,38 @@ class AudioQueue {
 
   push = (key) => {
     if (typeof key === 'undefined') { return; }
-    
-    let file = AudioUtils.getRandom(this.sounds, key, this.options.commentator) || AudioUtils.getGeneric(this.sounds, key, this.options.commentator);
+
+    const commentator = this.options.commentator;
+    const exactFile = AudioUtils.getRandom(this.sounds, key, commentator);
+    let genericFile;
+    let file = exactFile;
+
+    if (!file) {
+      genericFile = AudioUtils.getGeneric(this.sounds, key, commentator);
+      file = genericFile;
+    }
     
     // Random chance (1/6) to play a 'fill' sound instead of nothing
     // when there is no sound for the notation
     const trueOneOutOfSix = () => !(Math.floor(Math.random() * 6));
+    let fillRollPassed = false;
+    let fillFile;
     if (!file && trueOneOutOfSix()) {
-      file = AudioUtils.getRandom(this.sounds, 'fill', this.options.commentator);
+      fillRollPassed = true;
+      fillFile = AudioUtils.getRandom(this.sounds, 'fill', commentator);
+      file = fillFile;
     }
+
+    console.log('[Dmitlichess][AudioQueue.push]', {
+      key,
+      commentator,
+      exactFile: exactFile || null,
+      genericFile: genericFile || null,
+      fillRollPassed,
+      fillFile: fillFile || null,
+      selectedFile: file || null,
+      queueLengthBeforePush: this.queue.length
+    });
 
     // console.log(key, file, this.queue.length);
 

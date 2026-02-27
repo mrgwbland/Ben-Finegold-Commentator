@@ -5,6 +5,7 @@ class MoveEmitter {
     this.movesElement = movesElement;
     this.dispatchTarget = dispatchTarget;
     this.observers = [];
+    this.lastEmittedNotation = null;
   }
 
   handleMutations = (mutations) => {
@@ -17,22 +18,36 @@ class MoveEmitter {
       if (!MutationUtils.hasAddedNodes(mutation)) { return; }
 
       let added = mutation.addedNodes[0];
-      const notation = added.textContent;
-
       if (added.nodeName === 'TURN') {
-        added = added.querySelector('MOVE.active');
+        added = added.querySelector('MOVE.active') || added.querySelector('MOVE:last-child') || added;
+      } else if (added.nodeName !== 'MOVE' && typeof added.querySelector === 'function') {
+        added = added.querySelector('MOVE.active') || added.querySelector('MOVE:last-child') || added;
       }
 
+      const notation = (added.textContent || '').trim();
       if (!notation) { return; }
-      // If the node is active, it will have $active-class which is renamed often.
-      // As a workaround, just check that it has a class name set.
-      // https://github.com/ornicar/lila/blob/master/ui/round/css/_constants.scss#L12
-      if (added.classList.length === 0) { return; }
 
       const notationType = isCapture(notation) ? 'capture' : 'move';
       const eventDetail = {
         detail: { notation: trimSymbols(notation) }
       };
+
+      if (eventDetail.detail.notation === this.lastEmittedNotation) {
+        console.log('[Dmitlichess][MoveEmitter][dedupe]', {
+          rawNotation: notation,
+          normalizedNotation: eventDetail.detail.notation,
+          notationType
+        });
+        return;
+      }
+
+      this.lastEmittedNotation = eventDetail.detail.notation;
+
+      console.log('[Dmitlichess][MoveEmitter]', {
+        rawNotation: notation,
+        normalizedNotation: eventDetail.detail.notation,
+        notationType
+      });
 
       this.dispatchTarget.dispatchEvent(new CustomEvent(notationType, eventDetail));
 

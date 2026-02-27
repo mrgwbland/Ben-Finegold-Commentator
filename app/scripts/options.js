@@ -3,11 +3,11 @@
 class OptionsCtrl {
   constructor() {
     this.commentatorMetaDefaults = {
-      dmitri: { icon: 'dmitri.png', name: 'Dmitri Komarov' },
-      maurice: { icon: 'maurice.png', name: 'Maurice Ashley' },
-      yasser: { icon: 'yasser.png', name: 'Yasser Seirawan' },
+      //dmitri: { icon: 'dmitri.png', name: 'Dmitri Komarov' },
+      //maurice: { icon: 'maurice.png', name: 'Maurice Ashley' },
+      //yasser: { icon: 'yasser.png', name: 'Yasser Seirawan' },
       finegold: { icon: 'Finegold.png', name: 'Ben Finegold' },
-      zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' }
+      //zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' }
     };
 
     this.elements = {
@@ -174,8 +174,30 @@ class OptionsCtrl {
   _initAsync = async () => {
     try {
       const items = await UserPrefs.getOptions();
-      await this.createCommentatorOptions(items.commentators);
-      this.restore(items);
+      const allowedCommentators = Object.keys(this.commentatorMetaDefaults);
+      const storedCommentators = Array.isArray(items.commentators) ? items.commentators : [];
+      const commentators = storedCommentators.filter(commentator => allowedCommentators.includes(commentator));
+      const normalizedCommentators = commentators.length ? commentators : allowedCommentators;
+      const normalizedCommentator = allowedCommentators.includes(items.commentator)
+        ? items.commentator
+        : normalizedCommentators[0];
+
+      if (
+        normalizedCommentator !== items.commentator
+        || normalizedCommentators.length !== storedCommentators.length
+      ) {
+        await UserPrefs.saveOptions({
+          commentator: normalizedCommentator,
+          commentators: normalizedCommentators
+        });
+      }
+
+      await this.createCommentatorOptions(normalizedCommentators);
+      this.restore({
+        ...items,
+        commentator: normalizedCommentator,
+        commentators: normalizedCommentators
+      });
       this.bindEventListeners();
     } catch (error) {
       console.error('Error initializing options:', error);
