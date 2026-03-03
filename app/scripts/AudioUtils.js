@@ -19,8 +19,10 @@ class AudioUtils {
 
   static getGeneric(sounds = throwIfMissing, key = throwIfMissing, commentator = UserPrefs.defaults.commentator) {
     // Generic capture fallback (after exact key lookup in AudioQueue.push):
-    // Qxf7 -> xf7 -> Qx -> x
-    // N8xd7 / Nbxd7 -> xd7 -> Nxd7 -> Nx -> x
+    // Piece capture fallback (uppercase):
+    //   Bbxd4 -> Bxd4 -> xd4 -> Bx -> x
+    // Pawn capture fallback (lowercase):
+    //   bxd4 -> xd4 -> bx -> px -> x
     if (key.includes('x')) {
       const xIndex = key.indexOf('x');
       const targetMatch = key.match(/x([a-h][1-8])/i);
@@ -28,16 +30,24 @@ class AudioUtils {
       const pieceMatch = key.match(/^([KQRBN])/);
       const piece = pieceMatch && pieceMatch[1] ? pieceMatch[1] : null;
       const disambiguatedPieceCaptureMatch = key.match(/^([KQRBN])[a-h1-8]x([a-h][1-8])$/);
+      const pawnCaptureMatch = key.match(/^([a-h])x([a-h][1-8])$/);
 
       const fallbacks = [];
-      if (disambiguatedPieceCaptureMatch) {
-        fallbacks.push(`${disambiguatedPieceCaptureMatch[1]}x${disambiguatedPieceCaptureMatch[2].toLowerCase()}`);
+      if (pawnCaptureMatch) {
+        if (targetSquare) { fallbacks.push(`x${targetSquare}`); }
+        fallbacks.push(`${pawnCaptureMatch[1]}x`);
+        fallbacks.push('px');
+      } else {
+        if (disambiguatedPieceCaptureMatch) {
+          fallbacks.push(`${disambiguatedPieceCaptureMatch[1]}x${disambiguatedPieceCaptureMatch[2].toLowerCase()}`);
+        }
+        if (targetSquare) { fallbacks.push(`x${targetSquare}`); }
+        if (piece && xIndex > 0) { fallbacks.push(`${piece}x`); }
       }
-      if (targetSquare) { fallbacks.push(`x${targetSquare}`); }
-      if (piece && xIndex > 0) { fallbacks.push(`${piece}x`); }
+
       fallbacks.push('x');
 
-      console.log('[Dmitlichess][AudioUtils.getGeneric][capture]', {
+      console.log('[finegoldlichess][AudioUtils.getGeneric][capture]', {
         key,
         commentator,
         fallbacks
@@ -45,7 +55,7 @@ class AudioUtils {
 
       for (const fallbackKey of fallbacks) {
         const file = this.getRandom(sounds, fallbackKey, commentator);
-        console.log('[Dmitlichess][AudioUtils.getGeneric][captureTry]', {
+        console.log('[finegoldlichess][AudioUtils.getGeneric][captureTry]', {
           key,
           fallbackKey,
           hit: !!file,
@@ -54,7 +64,7 @@ class AudioUtils {
         if (file) { return file; }
       }
 
-      console.log('[Dmitlichess][AudioUtils.getGeneric][captureMiss]', {
+      console.log('[finegoldlichess][AudioUtils.getGeneric][captureMiss]', {
         key,
         commentator
       });
@@ -67,7 +77,7 @@ class AudioUtils {
       const fallbackKey = `${disambiguatedPieceMoveMatch[1]}${disambiguatedPieceMoveMatch[2]}`;
       const file = this.getRandom(sounds, fallbackKey, commentator);
 
-      console.log('[Dmitlichess][AudioUtils.getGeneric][pieceMoveTry]', {
+      console.log('[finegoldlichess][AudioUtils.getGeneric][pieceMoveTry]', {
         key,
         fallbackKey,
         hit: !!file,
@@ -77,10 +87,40 @@ class AudioUtils {
       if (file) { return file; }
     }
 
-    // @TODO: Also handle other fallback notation:
-    //   - Nd2 if Nbd2 sound doesn't exist
-    //   - Bx if Bxf4 doesn't exist
-    //   - h1 if Kh1 doesn't exist
+    // Final piece fallback:
+    // Ref8 -> Rf8 -> R
+    // Qxf7 -> ... -> Q
+    const pieceNameMatch = key.match(/^([KQRBN])/);
+    if (pieceNameMatch) {
+      const fallbackKey = pieceNameMatch[1];
+      const file = this.getRandom(sounds, fallbackKey, commentator);
+
+      console.log('[finegoldlichess][AudioUtils.getGeneric][pieceNameTry]', {
+        key,
+        fallbackKey,
+        hit: !!file,
+        file: file || null
+      });
+
+      if (file) { return file; }
+    }
+
+    // Final pawn fallback:
+    // h3 -> h
+    const pawnFileMatch = key.match(/^([a-h])/);
+    if (pawnFileMatch) {
+      const fallbackKey = pawnFileMatch[1];
+      const file = this.getRandom(sounds, fallbackKey, commentator);
+
+      console.log('[finegoldlichess][AudioUtils.getGeneric][pawnFileTry]', {
+        key,
+        fallbackKey,
+        hit: !!file,
+        file: file || null
+      });
+
+      if (file) { return file; }
+    }
 
     // Translate some game end states
     // @TODO: Individual sounds for white/black resigned?
@@ -90,7 +130,7 @@ class AudioUtils {
     */
     if (key.includes('resigned')) {
       const file = this.getRandom(sounds, 'resign', commentator);
-      console.log('[Dmitlichess][AudioUtils.getGeneric][state]', {
+      console.log('[finegoldlichess][AudioUtils.getGeneric][state]', {
         key,
         mappedTo: 'resign',
         hit: !!file,
@@ -100,7 +140,7 @@ class AudioUtils {
     }
     if (key.includes('time out')) {
       const file = this.getRandom(sounds, 'flag', commentator);
-      console.log('[Dmitlichess][AudioUtils.getGeneric][state]', {
+      console.log('[finegoldlichess][AudioUtils.getGeneric][state]', {
         key,
         mappedTo: 'flag',
         hit: !!file,
@@ -109,7 +149,7 @@ class AudioUtils {
       return file;
     }
 
-    console.log('[Dmitlichess][AudioUtils.getGeneric][noGenericMatch]', {
+    console.log('[finegoldlichess][AudioUtils.getGeneric][noGenericMatch]', {
       key,
       commentator
     });

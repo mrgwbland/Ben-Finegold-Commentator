@@ -1,6 +1,6 @@
 'use strict';
 
-class Dmitlichess {
+class finegoldlichess {
   constructor(movesElement) {
     if (!movesElement) { throw new Error('Move list with notation not found'); }
 
@@ -40,13 +40,13 @@ class Dmitlichess {
 
     // Options saved
     browser.storage.onChanged.addListener(async (changes, area) => {
-      // Restart dmitlichess when options are saved
+      // Restart finegoldlichess when options are saved
       if (area !== 'sync') { return; }
 
       // Stop to prevent sounds being repeated multiple times
       this.stop();
 
-      // Apply saved dmitlichess options and restart if enabled
+      // Apply saved finegoldlichess options and restart if enabled
       this.options = await UserPrefs.getOptions();
       if (this.options.enabled) {
         await this.start();
@@ -146,7 +146,7 @@ const observer = new MutationObserver((mutations, observerInstance) => {
 
   if (!movesElement) { return; }
 
-  window.dmitli = new Dmitlichess(movesElement);
+  window.dmitli = new finegoldlichess(movesElement);
   window.dmitli.init();
 
   observerInstance.disconnect();

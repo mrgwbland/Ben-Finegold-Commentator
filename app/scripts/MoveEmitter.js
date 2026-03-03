@@ -33,7 +33,7 @@ class MoveEmitter {
       };
 
       if (eventDetail.detail.notation === this.lastEmittedNotation) {
-        console.log('[Dmitlichess][MoveEmitter][dedupe]', {
+        console.log('[finegoldlichess][MoveEmitter][dedupe]', {
           rawNotation: notation,
           normalizedNotation: eventDetail.detail.notation,
           notationType
@@ -43,7 +43,7 @@ class MoveEmitter {
 
       this.lastEmittedNotation = eventDetail.detail.notation;
 
-      console.log('[Dmitlichess][MoveEmitter]', {
+      console.log('[finegoldlichess][MoveEmitter]', {
         rawNotation: notation,
         normalizedNotation: eventDetail.detail.notation,
         notationType

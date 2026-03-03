@@ -1,7 +1,7 @@
 # Change Log
 
-## [v0.3.*](https://github.com/vincentsimard/dmitlichess#) (2017-08-12)
-[Full Changelog](https://github.com/vincentsimard/dmitlichess#)
+## [v0.3.*](https://github.com/vincentsimard/finegoldlichess#) (2017-08-12)
+[Full Changelog](https://github.com/vincentsimard/finegoldlichess#)
 
 **Implemented enhancements:**
 

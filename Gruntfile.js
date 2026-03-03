@@ -262,7 +262,7 @@
                     options: {
                         archive: function() {
                             const manifest = grunt.file.readJSON('app/manifest.json');
-                            return 'package/dmitlichess-' + manifest.version + '.zip';
+                            return 'package/finegoldlichess-' + manifest.version + '.zip';
                         }
                     },
                     files: [{
