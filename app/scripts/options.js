@@ -7,6 +7,7 @@ class OptionsCtrl {
       //maurice: { icon: 'maurice.png', name: 'Maurice Ashley' },
       //yasser: { icon: 'yasser.png', name: 'Yasser Seirawan' },
       finegold: { icon: 'Finegold.png', name: 'Ben Finegold' },
+      hikaru: { icon: 'Hikaru.png', name: 'Hikaru Nakamura' },
       //zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' }
     };
 

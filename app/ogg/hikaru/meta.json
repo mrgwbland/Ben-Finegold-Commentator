@@ -1,0 +1,21 @@
+{
+  "name": "Hikaru Nakamura",
+  "icon": "Hikaru.png",
+  "sounds": {
+    "a6": ["a6.ogg"],
+    "c5": ["c5.ogg"],
+    "Be7": ["Be7.ogg"],
+    "Ke2": ["Ke2.ogg"],
+    "Nc3": ["Nc3.ogg"],
+    "check": [],
+    "checkmate": ["yeahtherewego.ogg"],
+    "draw": [],
+    "resign": [],
+    "flag": [],
+    "start": [],
+    "misc": ["iwantsevenqueens.ogg","hahahaha.ogg","wakeupyoustupidmouse.ogg"],
+    "fill": ["waitwhat.ogg","areyousure.ogg"],
+    "long": [],
+    "name": []
+  }
+}
