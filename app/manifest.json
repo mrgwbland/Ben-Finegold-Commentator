@@ -1,8 +1,8 @@
 {
     "name": "Finegold Commentary for Lichess",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "manifest_version": 3,
-    "description": "Adds commentary to lichess.org (audio)",
+    "description": "Adds live audio commentary to lichess.org",
     "icons": {
         "16": "images/icon-16.png",
         "128": "images/icon-128.png"
