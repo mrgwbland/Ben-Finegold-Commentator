@@ -6,9 +6,10 @@ class OptionsCtrl {
       //dmitri: { icon: 'dmitri.png', name: 'Dmitri Komarov' },
       //maurice: { icon: 'maurice.png', name: 'Maurice Ashley' },
       //yasser: { icon: 'yasser.png', name: 'Yasser Seirawan' },
+      //zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' },
       finegold: { icon: 'Finegold.png', name: 'Ben Finegold' },
       //hikaru: { icon: 'Hikaru.png', name: 'Hikaru Nakamura' },
-      //zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' }
+      graif: { icon: 'graif.png', name: 'William Graif' }
     };
 
     this.elements = {
@@ -178,7 +179,8 @@ class OptionsCtrl {
       const allowedCommentators = Object.keys(this.commentatorMetaDefaults);
       const storedCommentators = Array.isArray(items.commentators) ? items.commentators : [];
       const commentators = storedCommentators.filter(commentator => allowedCommentators.includes(commentator));
-      const normalizedCommentators = commentators.length ? commentators : allowedCommentators;
+      const missingCommentators = allowedCommentators.filter(commentator => !commentators.includes(commentator));
+      const normalizedCommentators = [...commentators, ...missingCommentators];
       const normalizedCommentator = allowedCommentators.includes(items.commentator)
         ? items.commentator
         : normalizedCommentators[0];
@@ -186,6 +188,7 @@ class OptionsCtrl {
       if (
         normalizedCommentator !== items.commentator
         || normalizedCommentators.length !== storedCommentators.length
+        || normalizedCommentators.some((commentator, idx) => commentator !== storedCommentators[idx])
       ) {
         await UserPrefs.saveOptions({
           commentator: normalizedCommentator,
