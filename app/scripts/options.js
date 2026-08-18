@@ -9,7 +9,7 @@ class OptionsCtrl {
       //zugaddict: { icon: 'zugaddict.png', name: 'John Chernoff' },
       finegold: { icon: 'Finegold.png', name: 'Ben Finegold' },
       //hikaru: { icon: 'Hikaru.png', name: 'Hikaru Nakamura' },
-      graif: { icon: 'graif.png', name: 'William Graif' }
+      //graif: { icon: 'graif.png', name: 'William Graif' }
     };
 
     this.elements = {
